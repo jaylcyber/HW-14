@@ -1,0 +1,96 @@
+#!/bin/bash
+
+#chmod a+rwx somefile
+#chmod u=r-x somefile
+#chmod g-r somefile
+#chmod u=rwx,g=rx,o=rx somefile
+#chmod 755 somefile
+
+ls -l research/ backups/
+ls -l /etc/shadow /etc/gshadow
+
+# rw
+sudo chmod 600 /etc/shadow
+
+# show the UID
+sudo tail /etc/passwd
+# change the UID of users 
+sudo nano /etc/passwd
+# change UID
+
+# special bit for special permissions to limit users
+ls -l /usr/bin/passwd 
+#-rwsr-xr-x 1 root root 59640 Mar 22  2019 /usr/bin/passwd
+# only root owner can execute 
+
+# sticky bit for user or group: s
+# sticky bit for other: T
+
+# add sticky bit for others
+chmod o+t test
+chmod 1000 test
+# undo sticky bit for others
+chmod o-t test
+
+# Set Group ID (SGID) in execute position in group permissions
+chmod g+s test
+chmod 2000 test
+
+# Set User ID (SUID) demo 
+# print the contents of '/etc/shadow'
+find /etc -iname shadow -exec cat {} \;
+# no permission denied
+
+sudo chmod u-s /usr/bin/find
+find /etc -iname shadow -exec cat {} \;
+# permission denied => safer
+
+sudo chmod u+s /usr/bin/find
+
+# `find /etc -iname shadow` to find a file that we know exists
+# `-exec` _execute_and that allows you to run the second command
+# `usermod` to add a user to the `sudo` group
+# `{}` to do all 
+# `\` to close the `find` command 
+find /etc -iname shadow -exec usermod -aG sudo sally {} \;
+
+find /etc -iname passwd -exec whoami \;
+#root
+#root
+#root
+
+find /etc -iname passwd -exec ls -l {} \;
+#-rw-r--r-- 1 root root 92 Jan 25  2018 /etc/pam.d/passwd
+#-rwxr-xr-x 1 root root 249 Jan 25  2018 /etc/cron.daily/passwd
+#-rw-r--r-- 1 root root 3300 May  1 21:40 /etc/passwd
+
+find /etc -iname passwd -exec chmod o+w {} \;
+
+find /etc -iname passwd -exec ls -l {} \;
+#-rw-r--rw- 1 root root 92 Jan 25  2018 /etc/pam.d/passwd
+#-rwxr-xrwx 1 root root 249 Jan 25  2018 /etc/cron.daily/passwd
+#-rw-r--rw- 1 root root 3300 May  1 21:40 /etc/passwd
+
+
+# show which services are running
+systemctl -t service --all
+
+# stop a service
+sudo sytemctl stop dovecot.service
+
+# show status of service
+sudo systemctl status dovecot.service
+sudo systemctl status smbd.service
+
+# remove the service from the system
+sudo apt remove dovecot.service
+
+# remove service users
+sudo deluser --remove-all-files dovecot
+
+# add 
+sudo adduser --system --no-create-home tripwire
+
+# show
+id tripwire
+

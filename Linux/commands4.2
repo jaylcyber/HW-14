@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# sudo to invoke the root user for one command only
+
+# to show shadow file fields
+sudo cat /etc/shadow | awk -F":" '{print $1,$2}'
+
+# hashing passwords
+echo "password" | md5sum
+#286755fad04869ca523320acce0dc6a4  -
+echo "p" | md5sum
+#9d7bf075372908f55e2d945c39e0a613  -
+echo "pewlci48fj" | md5sum
+#add80f2e7330e6468787a396a9a3307a  -
+md5sum /etc/passwd
+#d0f35e73dc31072b7e6a5c988f2c9c2d  /etc/passwd
+sha256sum /etc/passwd
+#2e331d73859ee9090f177fa7e26519f9c5c591c1694648643de9ff8140826282  /etc/passwd
+
+# to show password change status
+sudo chage -l sysadmin
+
+# to change the pw quality
+sudo nano /etc/security/pwquality.conf
+
+# to crack the passwords of shadow accounts
+sudo john ~/research/shadow
+
+# to check the info of each account
+sudo chage -l sally
+sudo chage -l jack
+
+# to change the password expiry to 90 and 10
+sudo chage -M 90 sally
+sudo chage -M 10 jack
+
+# to show the cracked password of shadow file
+sudo john -show passwd ~/research/shadow
+sudo john -show passwd shadow > ~/research/passwords.txt
+
+# to force immediate password expiration for a user on the next login
+sudo chage -d 0 sally
+sudo chage -d 0 jack
+
+# to force users to set min length 16 for passwords
+sudo nano /etc/security/pwquality.conf
+# add  'minlen = 16'
+
+
+# print current user
+whoami
+
+# print what sudo privilege the admin user has
+sudo -l
+# print what sudo access each user has
+sudo -lU sally >> ~/research/sudo_access.txt
+sudo -lU jack >> ~/reseach/sudo_access.txt
+
+# Switch User to root
+su
+# Switch User to another user
+su sally
+# enter 123456 (password of sally)
+
+#
+sudo su
+
+# to exit out
+exit
+
+
+# show if there are any users listed with sudo privileges
+sudo less /etc/sudoers
+
+# edit sudoers file 
+sudo visudo
+# remove user 'max' from 'sudo' access
+# remove max ALL=(ALL) /usr/bin/less
+
+
+# print uid, gid, groud,..of current user
+id
+id root
+# uid=o, gid=0, groups=0
+# copy
+id sysadmin >> ~/research/user_ids.txt
+
+# add group write privilege to group of user.hashes 
+chmod g+w user.hashes
+chmod g-w user.hashes
+
+# print the groups that the user and other users belong to.
+groups sysadmin >> ~/research/user_ids.txt
+#sysadmin : sysadmin sudo docker
+
+# remove any jack from sudo group
+groups jack
+sudo usermod -G jack jack
+
+# remove a user jack from /home  
+sudo deluser --remove-home jack
+
+# create and add a user group called developers
+sudo addgroup developers
+# add the user sally to a group developer
+sudo usermod -G developers sally
+# show 
+id sally
+#uid=1010(sally) gid=1012(sally) groups=1012(sally),1006(developers)
+

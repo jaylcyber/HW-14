@@ -1,0 +1,34 @@
+#!/bin/bash
+
+ls -R /home > ~/research/files_in_home.txt
+
+cp /etc/passwd ~/research/
+
+# sudo to invoke the root user for one command only
+sudo cp /etc/shadow ~/research/
+
+sudo cp -r /home/jack ~/research/
+
+sudo cp -r /home/http/ ~/research
+
+ls /bin > ~/research/files_in_bin.txt
+
+ls /sbin > ~/research/files_in_sbin.txt
+
+# install packages lynis, john, chkrootkit, tripwire
+# lynis checks the proper security of linux
+apt install lynis
+# john verifies the strong passwords of users
+apt install john
+# chkrootkit scans machine for the presence of a malware called rootkit
+apt install chkrootkit
+# tripwire monitors the file system for suspicious change 
+apt install tripwire
+
+apt list --installed
+apt list --installed  > ~/research/sw_installed_by_admin.txt
+
+sudo cp /var/log/* ~/research/logs
+ls ~/research/logs/
+
+ls /tmp
