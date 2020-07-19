@@ -1,0 +1,210 @@
+#!/bin/bash
+
+x=5                                 # number variable definication
+y=105
+str1='this is a string'             # string var definition
+str2="this is a different string"
+
+if [ $x == $y ] && [ 2 != 3]        # [ condition ]
+then                                # runs the following commands
+  echo $x is equal to $y && 2 is not equal to 3
+else                                # if [ condition ] is false, run the following 
+  echo "$x is not equal to $y"
+  echo  endOfExample1
+fi                                  # ends the if ..
+
+
+if [ "$str1 -ne $str2" ]            # need " " because of string variables have spaces???????????
+then
+  if [ $x -gt $y ]
+  then
+    echo $x is greater than $y
+  fi
+  if [ $x -lt $y ]
+  then
+    echo "$x < $y"
+    if [ "$str1 != $str2" ] || [ "$str1 -ne not this string" ]  # " " b/c of string var has spaces??
+    then
+      echo "$str1 != $str2 || $str1 != not this string"
+    fi
+  fi
+fi
+
+
+if [ ! -d /etc ]                                              # if a directory .. NOT exists
+then
+  echo "/etc directory does NOT exist"
+else
+  if [ -d /etc ] && [ -f ~/commands6/list.txt ]               # if a file .. exists
+  then
+    echo "/etc directory exists && ~/commands6/list.txt file exists "
+  fi
+fi
+
+
+if [ $USER != sysadmin ]                                      # built-in variable $USER 
+then
+  echo "$USER NOT sysadmin"
+else
+  echo "$USER is sysadmin"
+  if [ $(whoami) == $USER ]                                   # command expansion using $
+  then
+    echo "$(whoami) == $USER"
+  fi
+fi
+
+#################################################################################################
+
+# Activity 3
+
+outSysInfoPath=$HOME/research/sys_info.txt
+echo $outSysInfoPath
+
+ip=$(ip addr | tail -2 | head -1)
+echo $ip
+
+#suids=$(find / -type f -perm /4000)
+#echo $suids
+
+# 1 line if then statements (no ; after then)
+if [ ! -d $HOME/research ]; then mkdir $HOME/research; echo "ok"; fi
+
+if [ -f $outSysInfoPath ]; then rm $outSysInfoPath; echo "ok"; fi
+
+if [ $UID == 0 ] || [ $USER == 'root' ]
+then
+  echo "it's run using sudo"
+else
+  if [ $USER == 'sysadmin' ]
+  then
+    echo "it's run as $USER"
+  fi
+fi
+
+
+#################################################################################################
+
+# bash array
+
+#bashA=(a b c d e)  # no , between array elements
+bashA=(0 1 2 3 4)   # no bashA={0..5} does NOT work!
+echo ${bashA[0]}   # $ to access the var, {} to tell the var is an array, [0] index starting 0
+echo "bashA[2]: ${bashA[2]}, bashA[@]: ${bashA[@]} "
+
+for n in {0..5}     # n is a iterator (variable), in, { .. } expands into an array
+do                  # follow for
+	if [ $n = 1 ] || [ $n == 3 ] || [ $n == 5 ]
+	then
+		echo "$n is odd"
+	else
+		echo "$n is even"
+	fi          # mark the end of if
+done                # mark the end of for loop
+ 
+
+seasons=(
+	spring
+	summer
+	fall
+	winter
+)
+
+days=('mon' 'tue' 'wed' 'thu' 'fri' 'sat' 'sun')         # array in 1 line
+
+# for loop (iterations)
+
+for season in ${seasons[@]}   # $ to access var, { } for array, [@] for all index, no ; is okay
+do                                           # to follow for
+	echo " "
+	echo $season
+	for day in ${days[@]};               # ; is kay
+	do                                   # to follow for
+		if [ $day == 'sun' ] || [ $day == 'sat' ]
+		then 
+			echo "It's $day.  Relax"
+		else
+			echo "It's $day. Get to work"
+		fi                           # mark the end of if
+	done                                 # mark the end of do
+done                                         # mark the end of do
+
+echo " "
+
+for fOrD in $(ls); do ls -al $fOrD; done
+
+#############################################################################################
+
+# Activity 6
+
+# for_loops.sh
+#!+bain/bash 
+nums=$(echo {0..9})  #numA=(0 1 2 3 4 5 6 7 8 9)
+states=('CA' 'NY' 'MA' 'UT')
+lsOut=$(ls)
+
+#for n in ${nums[@]}    # works
+for n in {0..9}         # brace extension only for loop
+do
+	if [ $n == 1 ] || [ $n == 3 ] || [ $n == 5 ] || [ $n == 7 ] || [ $n == 9 ]
+	then
+		echo $n
+	fi
+done
+
+for s in ${states[@]};
+do
+	if [ $s == 'NY' ]
+	then
+		echo "NY is the best"
+	else
+		echo "I like $s"
+	fi
+done
+
+for fOrD in ${lsOut[@]}; do echo $fOrD; done
+
+
+##############################################################################################
+
+# for loops for sysAdmins
+# loop through a list of packages to check if they're installed
+#              a group of files to check their permissions and change if needed
+#              a group of files and create a cryptographic has of each file
+#              all the users on the system and take an action for each one
+
+
+# useful_loops.sh
+# define packages array
+packages=('nano' 'wget' 'net-tools')
+# check if they are installed
+for package in ${packages[@]}
+do
+	if [ $(which $package) ]
+	then
+		echo "$package is installed at $(which $package)."
+	else
+		echo "$package is not installed."
+	fi
+done
+
+# loop through scripts and change permissins to exeute
+for fOrD in $(ls ~/commands6)
+do
+	if [ -x $fOrd ]
+	then
+		echo "$fOrD is executable"
+	else
+		echo "$fOrD is NOT executable"
+	fi
+done
+
+# loop through and create a hash
+for l in $(ls /etc/passwd); do sha256sum $l; done
+
+#######################################################################################3
+
+# Activity 
+
+# sys_info2.sh
+
+

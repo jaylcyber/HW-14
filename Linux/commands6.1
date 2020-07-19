@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# program -options arguments | program -options | program argument ..
+# compound commands
+ls > list.txt             # stdout to / create a file
+ls >> list.txt              # stdout to / append to a file
+ls -l | grep .txt             # pipes the out put of the previous command to the next command
+ls -l | grep '.txt'           # grep works with or without quote
+mkdir dir; cd dir; touch file; ls -l   # these commands run back to back regardless of outcome
+mkdir dir2 && cd dir2 && touch file2 && ls -l  # the next command run only if the previous one succeeds
+ls -l | awk -F " " '{print $1,$2}'
+mkdir ~/research && cp -r /var/logs/* /etc/shadow /etc/passwd ~/research
+sudo find / -type f -perm /4000 > /research/sudoFile.txt
+
+ls home > ~/research/users.txt && cat /etc/passwd | awk -F ":" '{if ($3 >=1000) print $0}' >> ~/research/users.txt
+
+# alias
+alias lsal='ls -al'
+unalias lsal
+
+# .bashrc
+ls -al  # to see the hidden files and .bashrc
+nano .bashrc  # to add custom alias commands
+source .bashrc  # to reload file
+
+# echo outputs " ", alias declares, reloadBashrc is the custom command to reload (source) .bashrc
+# >> appends this to a file, then reload (source) .bashrc
+echo "alias reloadBashrc='source ~/.bashrc'" >> ~/.bashrc && source ~/.bashrc
+
+# basic variables
+myVar='/etc/passwd'                 # NO sapce before and after =
+echo $myVar   # $ to proceed a variable name, when calling a variable
+
+# built-in variables
+# environment / shell variables are always in UPPER CASE
+echo my present working directory is $PWD.
+echo "My user name is $USER."
+echo Name of hostname: $HOSTNAME.
+echo 'My user ID: $UID'
+
+# command expansion using $()
+# $ to receive the output of the command inside ()
+echo $(ls)     # command3 command4 ...
+echo "$(ls)"  
+# command 3
+# command 4
+# ...
+echo '$(ls)'  # $(ls)
+
+# Bash Scripting - to setup and configure machines, to pen test / probe networks
+# .sh file extension for bash scirpt files
+# Linux ignores file extensions; it looks at the contents of the file to determine how to use it.
+# text editor: nano, vim, emacs
+nano myScript    # create an empty (script) file
+echo hello world # inside myScript
+chmod +x myScript # to make it executable
+bash myScript    # /bin/bash myScript  # ./myScript
+mv myScript myScript.sh  # to rename
+# to tell the system what shell to interpret this file, add #!/bin/bash at the top of .sh
+which bash  # /bin/bash
+
+# create a script file, sys_info.sh
+
+# custom commands
+echo $PATH # $PATH is an environment variable to hold a list of directories
+
