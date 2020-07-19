@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# execute backup .sh script every Sunday at 2:36 am
+# min hour dayOfMo month dayOfWk execute commandAsRootUser nameOfShellScript
+  36  2    *       *     7       root                     /usr/local/sbin/backup.sh
+# remove Downloads directory every Saturday at 11:00 pm
+0 23 * * 6 rm ~/Downloads/*
+
+
+# Activity 1: crontab
+# cron job run under the same permission as the user who creates the cron job
+# anyone capable of sudo can add a malicous cron job to the root crontab => avoid using root crontab
+
+# verify that `cron` daemon is installed and running
+systemctl status cron
+
+# inspect user crontab and verify that there are no uncommented lines
+crontab -l
+
+# create directories to move directories to
+sudo mkdir -p /usr/share/ {doctors,patients,treatments}
+
+# open crontab for editing
+crontab -e
+
+# add / automate the cron jobs to move and archive files and directories
+0 18 * * * mv ~/Downloads/doctors*.docx /usr/share/doctors
+
+# how to execute cronjob??
+
+# ??????????????????????????
+sudo ls -l /var/spool/cron/crontabs/
+
+###########################################################################################
+
+# Activity 2
+
+mkdir ~/scripts5.2
+
+# write backup.sh to automate gzip-compressed archives and backups
+nano ~/scripts5.2/backup.sh
+
+# write update.sh to automate sw package updates and removal
+nano ~/scripts5.2/update.sh
+
+# write cleanup.sh to automate the cleanup of cached files and generate a report
+nano ~/scripts5.2/cleanup.sh
+
+# test the scripts by running 
+chmod +x backup.sh
+chmod +x update.sh
+chmod +s cleanup.sh
+
+./backup.sh
+./update.sh
+./cleanup.sh
+
+#################################################################################################3
+
+# Activity 3
+
+sudo cp backup.sh /etc/cron.weekly
+
+sudo cp cleanup.sh /etc/daily
+
+sudo cp update.sh /etc/cron.weekly
+
+cd /home/sysadmin/script5.2
+
+nano lynis.system.sh
+
+nano lynis.partial.sh
+
+sudo cp lynis.system.sh /etc/cron.weekly
+
+sudo cp lynis.partial.sh /etc/cron.daily
+
+##################################################################################################3
+
+# Activity 4
+
+nc -n -v -l -p 1234
+
+netstat -atp
+
+sudo crontab -l
+
+kill 1234
+
+

@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# To create a full backup tarball file
+# tar (command), c (create), vv (print the full file spec), W (verify the archive after write), f (use this archive file)
+# epscript (the directory of files to archive/backup)
+# 20200428epscript.tar (name of archived filename / tarball)
+# 20200428epscript.txt (output of the command to file)
+tar -cvvWf 20200428epscript.tar epscript > 20200428epscript.txt
+
+# To list the contents of the arhived file (tarball) and print
+tar -tvvf 20200428epscript.tar
+
+# To restore /extract data from a full backup
+# x (extract files from tarball and write to disk), vv (display full file spec), f (specify archive file to use)
+tar -xvvf 20200428epscript.tar
+#creates an extracted directory (epscript)
+
+# To search the archive 
+cat epscript/doctors/* | grep "Mark,Lopez"
+cat epscript/patients/* | grep "Mark,Lopez"
+#809,Mark,Lopez,male,O,31,577.511.1054x23935,jeffrey93@jones.net,model,"673 Schultz Spur Apt. 244
+#809,Mark,Lopez,male,O,31,577.511.1054x23935,jeffrey93@jones.net,model,"673 Schultz Spur Apt. 244
+
+# To create a directory where the extracted files are saved to
+mkdir backups/patient_search
+# To extract only patient directory and files to a new directory for review
+# -R (print error messages for any error with block number in the archive file when extracting files)
+# -C (save the patient directory and files)
+# backups/patient_search (directory where extracted files are saved)
+# epscript/patients (directory of original files that tar archived and compared against?)
+# epscript/patients (directory of extracted files are saved under?)
+tar -xvvf 20200428epscript.tar -R -C backups/patient_search/ epscript/patients 
+
+# To create an incremental backup after a full backup performed, .snar (list of files changed in a snapshot)
+# epscript_backup_sun.tar (level 0 backup/archive) 
+# epscript_backup.snar (snapshot file that stores info about files added, changed, or removed)
+# leve=0 (this backup will be the very first backup in the series, so effetively full backup which will be basis for all later incremental backups)
+tar -cvvWf epscript_backup_sun.tar --listed-incremental=epscript_backup.snar --level=0 epscript/testenvir
+
+# To list the status / contents of the level 0 backup
+tar -tvvf epscript_backup_sun.tar --incremental
+# in the files of backup
+# D (directories), Y (these files are contained in the archive)
+
+# To create an incremental backup that will include the added files
+tar -cvvWf epscript_backup_mon.tar --listed-incremental=epscript_backup.snar epscript/testenvir
+# To list the status / contents of ..._mon.tar incremental backup
+tar -tvvf epscript_backup_mon.tar --incremental
+# N (these files are not to the epscript_backup_mon.tar achive because it had not changed since the last backup
+
+# To extract and restore the deleted files
+tar -xvvf epscript_backup_mon.tar -R --incremental
